@@ -1,5 +1,4 @@
-import { type OrderBookSide } from "./OrderBook.js";
-import { v4 as uuidv4} from "uuid";
+import type { OrderBookSide, Order, OrderResult, Trade } from "./OrderBook.js";
 
 export class MatchingEngine {
     bids: OrderBookSide;
@@ -10,67 +9,75 @@ export class MatchingEngine {
         this.asks = new Map();
     }
 
-    insertOrder(userId: string, side: "BUY"|"SELL", price: number, quantity: number) {
-        if(side == "BUY") {
-            if(!this.bids.get(price)){
-                this.bids.set(price, [{
-                    id: uuidv4(),
-                    userId,
-                    side,
-                    price,
-                    quantity,
-                    timestamp: Date.now()
+    insertOrder(order: Order) {
+        if(order.side == "BUY") {
+            if(!this.bids.get(order.price)){
+                this.bids.set(order.price, [{
+                    id: order.id,
+                    userId: order.userId,
+                    side: order.side,
+                    price: order.price,
+                    quantity: order.quantity,
+                    timestamp: order.timestamp
                 }]);
 
-                return this.bids.get(price)![0];
+                return this.bids.get(order.price)![0];
             }
 
-            this.bids.get(price)?.push({
-                id: uuidv4(),
-                userId,
-                side,
-                price,
-                quantity,
-                timestamp: Date.now()
+            this.bids.get(order.price)?.push({
+                id: order.id,
+                userId: order.userId,
+                side: order.side,
+                price: order.price,
+                quantity: order.quantity,
+                timestamp: order.timestamp
             });
 
-            return this.asks.get(price)![0];
+            return this.asks.get(order.price)![0];
         }
 
-        if(side == "SELL") {
-            if(!this.asks.get(price)){
-                this.asks.set(price, [{
-                    id: uuidv4(),
-                    userId,
-                    side,
-                    price,
-                    quantity,
-                    timestamp: Date.now()
+        if(order.side == "SELL") {
+            if(!this.asks.get(order.price)){
+                this.asks.set(order.price, [{
+                    id: order.id,
+                    userId: order.userId,
+                    side: order.side,
+                    price: order.price,
+                    quantity: order.quantity,
+                    timestamp: order.timestamp
                 }]);
 
-                return this.asks.get(price)![0];
+                return this.asks.get(order.price)![0];
             }
 
-            this.asks.get(price)?.push({
-                id: uuidv4(),
-                userId,
-                side,
-                price,
-                quantity,
-                timestamp: Date.now()
+            this.asks.get(order.price)?.push({
+                id: order.id,
+                userId: order.userId,
+                side: order.side,
+                price: order.price,
+                quantity: order.quantity,
+                timestamp: order.timestamp
             })
 
-            return this.asks.get(price)![0];
+            return this.asks.get(order.price)![0];
         }
     }
 
-    matchOrder(userId: string, side: "BUY"|"SELL", price: number, quantity: number) {
-        const incomingOrder = this.insertOrder(userId, side, price, quantity);
+    matchOrder(order: Order): OrderResult{
+        const incomingOrder = this.insertOrder(order);
+        let trades: Trade[] = [];
+        let remainingQuantity: number = order.quantity;
 
         while(incomingOrder!.quantity > 0){
-            if(side == "BUY") {
+            if(order.side == "BUY") {
                 const bestAsk = Math.min(...this.asks.keys());
-                if(price < bestAsk) return incomingOrder!.quantity;
+                if(order.price < bestAsk) {
+                    return {
+                        order,
+                        trades,
+                        remainingQuantity
+                    }
+                }
 
                 const oldestOrder = this.asks.get(bestAsk)![0];
                 const tradingQuantity = Math.min(incomingOrder!.quantity, oldestOrder!.quantity);
@@ -78,14 +85,31 @@ export class MatchingEngine {
                 oldestOrder!.quantity = oldestOrder!.quantity - tradingQuantity;
                 incomingOrder!.quantity = incomingOrder!.quantity - tradingQuantity;
 
-                if(incomingOrder!.quantity == 0) this.bids.get(price)!.shift();
+                trades.push({
+                    buyOrderId: incomingOrder!.userId,
+                    sellOrderId: oldestOrder!.userId,
+                    price: oldestOrder!.price,
+                    quantity: tradingQuantity
+                })
+
+                remainingQuantity = incomingOrder!.quantity;
+
+                if(incomingOrder!.quantity == 0) this.bids.get(order.price)!.shift();
+                if(this.bids.get(order.price)!.length == 0) this.bids.delete(order.price);
+
                 if(oldestOrder!.quantity == 0) this.asks.get(bestAsk)!.shift();
                 if(this.asks.get(bestAsk)!.length == 0) this.asks.delete(bestAsk);
             }
 
-            if(side == "SELL") {
+            if(order.side == "SELL") {
                 const bestBid = Math.max(...this.bids.keys());
-                if(price > bestBid) return incomingOrder!.quantity;
+                if(order.price > bestBid) {
+                    return {
+                        order,
+                        trades,
+                        remainingQuantity
+                    }
+                }
 
                 const oldestOrder = this.bids.get(bestBid)![0];
                 const tradingQuantity = Math.min(incomingOrder!.quantity, oldestOrder!.quantity);
@@ -93,12 +117,27 @@ export class MatchingEngine {
                 oldestOrder!.quantity = oldestOrder!.quantity - tradingQuantity;
                 incomingOrder!.quantity = incomingOrder!.quantity - tradingQuantity;
 
-                if(incomingOrder!.quantity == 0) this.asks.get(price)!.shift();
+                trades.push({
+                    buyOrderId: oldestOrder!.userId,
+                    sellOrderId: incomingOrder!.userId,
+                    price: oldestOrder!.price,
+                    quantity: tradingQuantity
+                })
+
+                remainingQuantity = incomingOrder!.quantity;
+
+                if(incomingOrder!.quantity == 0) this.asks.get(order.price)!.shift();
+                if(this.asks.get(order.price)!.length == 0) this.asks.delete(order.price);
+
                 if(oldestOrder!.quantity == 0) this.bids.get(bestBid)!.shift();
                 if(this.bids.get(bestBid)!.length == 0) this.bids.delete(bestBid);
             }
         }
-        return incomingOrder!.quantity;
+        return {
+            order,
+            trades,
+            remainingQuantity
+        }
     }
 
     getOrderBook() {
