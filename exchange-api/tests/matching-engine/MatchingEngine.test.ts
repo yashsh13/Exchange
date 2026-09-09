@@ -40,7 +40,7 @@ describe('Matching engine tests', () => {
 
         expect(bids).toEqual(new Map());
         expect(asks).toEqual(new Map());
-    })
+    });
 
     it('keeps unmatched orders in the orderbook', () => {
         const engine = new MatchingEngine();
@@ -73,5 +73,45 @@ describe('Matching engine tests', () => {
         expect(asks).toEqual(new Map([[110, [bobOrder.order]] ]));
         
         expect(bids).toEqual(new Map([[100, [aliceOrder.order] ]]));
-    })
+    });
+
+    it('cancels an order', () => {
+        const engine = new MatchingEngine();
+
+        const bobOrder = engine.matchOrder({
+            id: "1",
+            userId: "bob",
+            side: "SELL",
+            price: 110,
+            quantity: 20,
+            timestamp: Date.now()
+        });
+
+        const isCancelled = engine.cancelOrder(bobOrder.order.id);
+
+        const {asks} = engine.getOrderBook();
+
+        expect(isCancelled).toBe(true);
+        expect(asks).toEqual(new Map());
+    });
+
+    it('doesnt cancels an invalid order', () => {
+        const engine = new MatchingEngine();
+
+        const bobOrder = engine.matchOrder({
+            id: "1",
+            userId: "bob",
+            side: "SELL",
+            price: 110,
+            quantity: 20,
+            timestamp: Date.now()
+        });
+
+        const isCancelled = engine.cancelOrder("2");
+
+        const {asks} = engine.getOrderBook();
+
+        expect(isCancelled).toBe(false);
+        expect(asks).toEqual(new Map([[110, [bobOrder.order] ]]));
+    });
 })

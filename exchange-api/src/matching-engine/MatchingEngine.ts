@@ -143,4 +143,34 @@ export class MatchingEngine {
     getOrderBook() {
         return {bids: this.bids, asks: this.asks};
     }
+
+    cancelOrder(orderId: string): boolean {
+        let isDeleted: boolean = false;
+
+        for(const [key,value] of this.asks) {
+            isDeleted = value.some(order => {
+                if(order.id === orderId) {
+                    const index = value.indexOf(order);
+                    value.splice(index,1);
+                    if(value.length === 0) this.asks.delete(key);
+
+                    return true;
+                }
+            });
+        }
+
+        for(const [key,value] of this.bids) {
+            isDeleted = value.some(order => {
+                if(order.id === orderId) {
+                    const index = value.indexOf(order);
+                    value.splice(index,1);
+                    if(value.length === 0) this.asks.delete(key);
+                    
+                    return true;
+                }
+            });
+        }
+
+        return isDeleted;
+    }
 }
