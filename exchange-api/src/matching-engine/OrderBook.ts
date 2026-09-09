@@ -1,10 +1,13 @@
+export type OrderStatus = "OPEN" | "PARTIALLY FILLED" | "FILLED" | "CANCELLED"; 
+
 export type Order = {
     id: string,
     userId: string,
     side: "BUY" | "SELL",
     price: number,
     quantity: number,
-    timestamp: number
+    timestamp: number,
+    status: OrderStatus
 };
 
 export type OrderBookSide = Map<number, Order[]>;
@@ -18,7 +21,6 @@ export type Trade = {
 
 export type OrderResult = {
     order: Order,
-    trades?: Trade[],
-    remainingQuantity: number
+    trades?: Trade[]
 }
 

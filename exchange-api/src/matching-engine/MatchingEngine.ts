@@ -12,52 +12,24 @@ export class MatchingEngine {
     insertOrder(order: Order) {
         if(order.side == "BUY") {
             if(!this.bids.get(order.price)){
-                this.bids.set(order.price, [{
-                    id: order.id,
-                    userId: order.userId,
-                    side: order.side,
-                    price: order.price,
-                    quantity: order.quantity,
-                    timestamp: order.timestamp
-                }]);
+                this.bids.set(order.price, [order]);
 
                 return this.bids.get(order.price)![0];
             }
 
-            this.bids.get(order.price)?.push({
-                id: order.id,
-                userId: order.userId,
-                side: order.side,
-                price: order.price,
-                quantity: order.quantity,
-                timestamp: order.timestamp
-            });
+            this.bids.get(order.price)?.push(order);
 
             return this.asks.get(order.price)![0];
         }
 
         if(order.side == "SELL") {
             if(!this.asks.get(order.price)){
-                this.asks.set(order.price, [{
-                    id: order.id,
-                    userId: order.userId,
-                    side: order.side,
-                    price: order.price,
-                    quantity: order.quantity,
-                    timestamp: order.timestamp
-                }]);
+                this.asks.set(order.price, [order]);
 
                 return this.asks.get(order.price)![0];
             }
 
-            this.asks.get(order.price)?.push({
-                id: order.id,
-                userId: order.userId,
-                side: order.side,
-                price: order.price,
-                quantity: order.quantity,
-                timestamp: order.timestamp
-            })
+            this.asks.get(order.price)?.push(order)
 
             return this.asks.get(order.price)![0];
         }
@@ -66,16 +38,14 @@ export class MatchingEngine {
     matchOrder(order: Order): OrderResult{
         const incomingOrder = this.insertOrder(order);
         let trades: Trade[] = [];
-        let remainingQuantity: number = order.quantity;
 
         while(incomingOrder!.quantity > 0){
             if(order.side == "BUY") {
                 const bestAsk = Math.min(...this.asks.keys());
                 if(order.price < bestAsk) {
                     return {
-                        order,
-                        trades,
-                        remainingQuantity
+                        order: incomingOrder!,
+                        trades
                     }
                 }
 
@@ -92,12 +62,19 @@ export class MatchingEngine {
                     quantity: tradingQuantity
                 })
 
-                remainingQuantity = incomingOrder!.quantity;
+                incomingOrder!.status = "PARTIALLY FILLED";
+                oldestOrder!.status = "PARTIALLY FILLED";
 
-                if(incomingOrder!.quantity == 0) this.bids.get(order.price)!.shift();
+                if(incomingOrder!.quantity == 0){ 
+                    this.bids.get(order.price)!.shift(); 
+                    incomingOrder!.status = "FILLED";
+                };
                 if(this.bids.get(order.price)!.length == 0) this.bids.delete(order.price);
 
-                if(oldestOrder!.quantity == 0) this.asks.get(bestAsk)!.shift();
+                if(oldestOrder!.quantity == 0){
+                    this.asks.get(bestAsk)!.shift();
+                    oldestOrder!.status = "FILLED";
+                };
                 if(this.asks.get(bestAsk)!.length == 0) this.asks.delete(bestAsk);
             }
 
@@ -105,9 +82,8 @@ export class MatchingEngine {
                 const bestBid = Math.max(...this.bids.keys());
                 if(order.price > bestBid) {
                     return {
-                        order,
-                        trades,
-                        remainingQuantity
+                        order: incomingOrder!,
+                        trades
                     }
                 }
 
@@ -124,19 +100,26 @@ export class MatchingEngine {
                     quantity: tradingQuantity
                 })
 
-                remainingQuantity = incomingOrder!.quantity;
+                incomingOrder!.status = "PARTIALLY FILLED";
+                oldestOrder!.status = "PARTIALLY FILLED";
 
-                if(incomingOrder!.quantity == 0) this.asks.get(order.price)!.shift();
+                if(incomingOrder!.quantity == 0){
+                    this.asks.get(order.price)!.shift();
+                    incomingOrder!.status = "FILLED";
+                }
                 if(this.asks.get(order.price)!.length == 0) this.asks.delete(order.price);
 
-                if(oldestOrder!.quantity == 0) this.bids.get(bestBid)!.shift();
+                if(oldestOrder!.quantity == 0){ 
+                    this.bids.get(bestBid)!.shift();
+                    oldestOrder!.status = "FILLED";
+                }
                 if(this.bids.get(bestBid)!.length == 0) this.bids.delete(bestBid);
             }
         }
+
         return {
-            order,
-            trades,
-            remainingQuantity
+            order: incomingOrder!,
+            trades
         }
     }
 
@@ -154,6 +137,7 @@ export class MatchingEngine {
                     value.splice(index,1);
                     if(value.length === 0) this.asks.delete(key);
 
+                    order.status = "CANCELLED";
                     return true;
                 }
             });
@@ -165,7 +149,8 @@ export class MatchingEngine {
                     const index = value.indexOf(order);
                     value.splice(index,1);
                     if(value.length === 0) this.asks.delete(key);
-                    
+
+                    order.status = "CANCELLED";
                     return true;
                 }
             });
