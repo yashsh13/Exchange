@@ -1,3 +1,5 @@
+import type { Trade } from "./trade.js";
+
 export type OrderStatus = "OPEN" | "PARTIALLY FILLED" | "FILLED" | "CANCELLED"; 
 
 export type Order = {
@@ -11,13 +13,6 @@ export type Order = {
 };
 
 export type OrderBookSide = Map<number, Order[]>;
-
-export type Trade = {
-    buyOrderId: string,
-    sellOrderId: string,
-    price: number,
-    quantity: number
-};
 
 export type OrderResult = {
     order: Order,

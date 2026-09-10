@@ -1,13 +1,9 @@
-import type { OrderBookSide, Order, OrderResult, Trade } from "./OrderBook.js";
+import type { OrderBookSide, Order, OrderResult } from "../types/order.js";
+import type { Trade } from "../types/trade.js";
 
 export class MatchingEngine {
-    bids: OrderBookSide;
-    asks: OrderBookSide;
-
-    constructor() {
-        this.bids = new Map();
-        this.asks = new Map();
-    }
+    bids: OrderBookSide = new Map();
+    asks: OrderBookSide = new Map();
 
     insertOrder(order: Order) {
         if(order.side == "BUY") {
