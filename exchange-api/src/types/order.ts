@@ -8,6 +8,7 @@ export type Order = {
     side: "BUY" | "SELL",
     price: number,
     quantity: number,
+    originalQuantity: number,
     timestamp: number,
     status: OrderStatus
 };

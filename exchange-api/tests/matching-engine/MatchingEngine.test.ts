@@ -12,6 +12,7 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 100,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -22,6 +23,7 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -56,6 +58,7 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -66,6 +69,7 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -94,6 +98,7 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 100,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -104,6 +109,7 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 30,
+            orignalQuantity: 30,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -137,6 +143,7 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -159,6 +166,7 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
+            orignalQuantity: 20,
             timestamp: Date.now(),
             status: "OPEN"
         });
