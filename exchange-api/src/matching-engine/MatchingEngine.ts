@@ -54,6 +54,7 @@ export class MatchingEngine {
                 trades.push({
                     buyOrderId: incomingOrder!.userId,
                     sellOrderId: oldestOrder!.userId,
+                    stockId: order.stockId,
                     price: oldestOrder!.price,
                     quantity: tradingQuantity
                 })
@@ -92,6 +93,7 @@ export class MatchingEngine {
                 trades.push({
                     buyOrderId: oldestOrder!.userId,
                     sellOrderId: incomingOrder!.userId,
+                    stockId: order.stockId,
                     price: oldestOrder!.price,
                     quantity: tradingQuantity
                 })
@@ -123,7 +125,7 @@ export class MatchingEngine {
         return {bids: this.bids, asks: this.asks};
     }
 
-    cancelOrder(orderId: string): boolean {
+    deleteOrder(orderId: string): boolean {
         let isDeleted: boolean = false;
 
         for(const [key,value] of this.asks) {

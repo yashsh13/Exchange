@@ -24,6 +24,7 @@ describe("Settlement - settleTrade", () => {
             side: "BUY",
             price: 100,
             originalQuantity: 100,
+            stockId: "AAPL",
             quantity: 60,
             timestamp: Date.now(),
             status: "PARTIALLY FILLED",
@@ -35,6 +36,7 @@ describe("Settlement - settleTrade", () => {
             side: "SELL",
             price: 95,
             originalQuantity: 40,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -43,6 +45,7 @@ describe("Settlement - settleTrade", () => {
         const trade: Trade = {
             buyOrderId: "buy-order-1",
             sellOrderId: "sell-order-1",
+            stockId: "AAPL",
             price: 95,
             quantity: 40
         };
@@ -53,8 +56,7 @@ describe("Settlement - settleTrade", () => {
         orders.set(sellOrder.id, sellOrder);
 
         const settlement = new Settlement(
-            accountManager,
-            "AAPL"
+            accountManager
         );
 
         settlement.settleTrade(trade, orders);
@@ -88,6 +90,7 @@ describe("Settlement - settleTrade", () => {
             side: "BUY",
             price: 100,
             originalQuantity: 50,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -99,6 +102,7 @@ describe("Settlement - settleTrade", () => {
             side: "SELL",
             price: 100,
             originalQuantity: 50,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -107,6 +111,7 @@ describe("Settlement - settleTrade", () => {
         const trade: Trade = {
             buyOrderId: "buy-order-1",
             sellOrderId: "sell-order-1",
+            stockId: "AAPL",
             price: 100,
             quantity: 50
         };
@@ -117,8 +122,7 @@ describe("Settlement - settleTrade", () => {
         orders.set(sellOrder.id, sellOrder);
 
         const settlement = new Settlement(
-            accountManager,
-            "AAPL"
+            accountManager
         );
 
         settlement.settleTrade(trade, orders);
@@ -152,6 +156,7 @@ describe("Settlement - settleTrade", () => {
             side: "BUY",
             price: 100,
             originalQuantity: 40,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -163,6 +168,7 @@ describe("Settlement - settleTrade", () => {
             side: "SELL",
             price: 95,
             originalQuantity: 60,
+            stockId: "AAPL",
             quantity: 20,
             timestamp: Date.now(),
             status: "PARTIALLY FILLED",
@@ -171,6 +177,7 @@ describe("Settlement - settleTrade", () => {
         const trade: Trade = {
             buyOrderId: "buy-order-1",
             sellOrderId: "sell-order-1",
+            stockId: "AAPL",
             price: 95,
             quantity: 40
         };
@@ -181,8 +188,7 @@ describe("Settlement - settleTrade", () => {
         orders.set(sellOrder.id, sellOrder);
 
         const settlement = new Settlement(
-            accountManager,
-            "AAPL"
+            accountManager
         );
 
         settlement.settleTrade(trade, orders);
@@ -221,6 +227,7 @@ describe("Settlement - settleTrade", () => {
             side: "BUY",
             price: 100,
             originalQuantity: 100,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -232,6 +239,7 @@ describe("Settlement - settleTrade", () => {
             side: "SELL",
             price: 95,
             originalQuantity: 40,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -243,6 +251,7 @@ describe("Settlement - settleTrade", () => {
             side: "SELL",
             price: 98,
             originalQuantity: 60,
+            stockId: "AAPL",
             quantity: 0,
             timestamp: Date.now(),
             status: "FILLED",
@@ -251,6 +260,7 @@ describe("Settlement - settleTrade", () => {
         const trade1: Trade = {
             buyOrderId: "buy-order-1",
             sellOrderId: "sell-order-1",
+            stockId: "AAPL",
             price: 95,
             quantity: 40
         };
@@ -258,6 +268,7 @@ describe("Settlement - settleTrade", () => {
         const trade2: Trade = {
             buyOrderId: "buy-order-1",
             sellOrderId: "sell-order-2",
+            stockId: "AAPL",
             price: 98,
             quantity: 60
         };
@@ -269,8 +280,7 @@ describe("Settlement - settleTrade", () => {
         orders.set(sellOrder2.id, sellOrder2);
 
         const settlement = new Settlement(
-            accountManager,
-            "AAPL"
+            accountManager
         );
 
         settlement.settleTrade(trade1, orders);

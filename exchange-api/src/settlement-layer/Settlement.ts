@@ -5,8 +5,7 @@ import { AccountManager } from "./AccountManager.js";
 export class Settlement {
 
     constructor(
-        private accountManager: AccountManager,
-        private stockId: string
+        private accountManager: AccountManager
     ) {}
 
     settleTrade(trade: Trade, orders: Map<string, Order>) {
@@ -28,18 +27,24 @@ export class Settlement {
         buyer.lockedBalance -= value;
 
         buyer.holdings.set(
-            this.stockId,
-            (buyer.holdings.get(this.stockId) ?? 0) + trade.quantity
+            trade.stockId,
+            (buyer.holdings.get(trade.stockId) ?? 0) + trade.quantity
         );
 
         seller.lockedHoldings.set(
-            this.stockId,
-            (seller.lockedHoldings.get(this.stockId) ?? 0) - trade.quantity
+            trade.stockId,
+            (seller.lockedHoldings.get(trade.stockId) ?? 0) - trade.quantity
         );
 
         seller.balance += value;
 
-        this.accountManager.releaseOrderResources(buyOrder, trade, this.stockId);
+        //Release Locked resources
+        const expectedTradeValue = buyOrder.price * trade.quantity;
+        const actualTradeValue = trade.price * trade.quantity;
+        const releaseAmount = expectedTradeValue - actualTradeValue;
+
+        buyer.lockedBalance -= releaseAmount;
+        buyer.balance += releaseAmount;
     }
 
 }

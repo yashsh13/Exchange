@@ -12,7 +12,8 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 100,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -23,7 +24,8 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -36,7 +38,8 @@ describe('Matching engine tests', () => {
         expect(aliceOrder.trades).toEqual([
                 { 
                     buyOrderId: 'alice', 
-                    sellOrderId: 'bob', 
+                    sellOrderId: 'bob',
+                    stockId: "AAPL",
                     price: 100, 
                     quantity: 20 
                 }
@@ -58,7 +61,8 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -69,7 +73,8 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -98,7 +103,8 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 100,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -109,7 +115,8 @@ describe('Matching engine tests', () => {
             side: "BUY",
             price: 100,
             quantity: 30,
-            orignalQuantity: 30,
+            originalQuantity: 30,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
@@ -124,7 +131,8 @@ describe('Matching engine tests', () => {
 
         expect(aliceOrder.trades).toEqual([{ 
                     buyOrderId: 'alice', 
-                    sellOrderId: 'bob', 
+                    sellOrderId: 'bob',
+                    stockId: "AAPL",
                     price: 100, 
                     quantity: 20 
                 }]);
@@ -143,12 +151,13 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
 
-        const isCancelled = engine.cancelOrder(bobOrder.order.id);
+        const isCancelled = engine.deleteOrder(bobOrder.order.id);
 
         const {asks} = engine.getOrderBook();
 
@@ -166,12 +175,13 @@ describe('Matching engine tests', () => {
             side: "SELL",
             price: 110,
             quantity: 20,
-            orignalQuantity: 20,
+            originalQuantity: 20,
+            stockId: "AAPL",
             timestamp: Date.now(),
             status: "OPEN"
         });
 
-        const isCancelled = engine.cancelOrder("2");
+        const isCancelled = engine.deleteOrder("2");
 
         const {asks} = engine.getOrderBook();
 

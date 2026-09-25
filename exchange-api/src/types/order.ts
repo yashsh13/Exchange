@@ -9,6 +9,7 @@ export type Order = {
     price: number,
     quantity: number,
     originalQuantity: number,
+    stockId: string,
     timestamp: number,
     status: OrderStatus
 };
