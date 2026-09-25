@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { MatchingEngine } from "../../src/matching-engine/MatchingEngine.js";
+import { MatchingEngine } from "../../../src/matching-engine/MatchingEngine.js";
 
 describe('Matching engine tests', () => {
 
@@ -37,8 +37,8 @@ describe('Matching engine tests', () => {
 
         expect(aliceOrder.trades).toEqual([
                 { 
-                    buyOrderId: 'alice', 
-                    sellOrderId: 'bob',
+                    buyOrderId: '2', 
+                    sellOrderId: '1',
                     stockId: "AAPL",
                     price: 100, 
                     quantity: 20 
@@ -130,8 +130,8 @@ describe('Matching engine tests', () => {
         expect(aliceOrder.order.status).toBe("PARTIALLY FILLED");
 
         expect(aliceOrder.trades).toEqual([{ 
-                    buyOrderId: 'alice', 
-                    sellOrderId: 'bob',
+                    buyOrderId: '2', 
+                    sellOrderId: '1',
                     stockId: "AAPL",
                     price: 100, 
                     quantity: 20 

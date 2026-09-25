@@ -17,6 +17,10 @@ export class Exchange {
         this.markets = new Map<string, MatchingEngine>();
     }
 
+    createAccount(userId: string) {
+        return this.accountManager.createAccount(userId);
+    }
+
     addStock(stockId: string) {
         if (this.markets.has(stockId)) {
             throw new Error("Stock already exists");
@@ -83,7 +87,7 @@ export class Exchange {
 
         return {
             order,
-            trades,
+            trades
         };
 
     }

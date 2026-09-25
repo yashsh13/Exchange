@@ -52,8 +52,8 @@ export class MatchingEngine {
                 incomingOrder!.quantity = incomingOrder!.quantity - tradingQuantity;
 
                 trades.push({
-                    buyOrderId: incomingOrder!.userId,
-                    sellOrderId: oldestOrder!.userId,
+                    buyOrderId: incomingOrder!.id,
+                    sellOrderId: oldestOrder!.id,
                     stockId: order.stockId,
                     price: oldestOrder!.price,
                     quantity: tradingQuantity
@@ -91,8 +91,8 @@ export class MatchingEngine {
                 incomingOrder!.quantity = incomingOrder!.quantity - tradingQuantity;
 
                 trades.push({
-                    buyOrderId: oldestOrder!.userId,
-                    sellOrderId: incomingOrder!.userId,
+                    buyOrderId: oldestOrder!.id,
+                    sellOrderId: incomingOrder!.id,
                     stockId: order.stockId,
                     price: oldestOrder!.price,
                     quantity: tradingQuantity

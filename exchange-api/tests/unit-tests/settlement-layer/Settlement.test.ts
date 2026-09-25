@@ -1,8 +1,8 @@
 import { expect, it, describe } from "vitest";
-import { AccountManager } from "../../src/settlement-layer/AccountManager.js";
-import { Settlement } from "../../src/settlement-layer/Settlement.js";
-import type { Order } from "../../src/types/order.js";
-import type { Trade } from "../../src/types/trade.js";
+import { AccountManager } from "../../../src/settlement-layer/AccountManager.js";
+import { Settlement } from "../../../src/settlement-layer/Settlement.js";
+import type { Order } from "../../../src/types/order.js";
+import type { Trade } from "../../../src/types/trade.js";
 
 describe("Settlement - settleTrade", () => {
     it("should settle a trade and release the buyer's unused locked balance", () => {
