@@ -125,35 +125,41 @@ export class MatchingEngine {
         return {bids: this.bids, asks: this.asks};
     }
 
-    deleteOrder(orderId: string): boolean {
-        let isDeleted: boolean = false;
+    deleteOrder(orderId: string): Order {
+        for (const [key, orders] of this.asks) {
+            const index = orders.findIndex(order => order.id === orderId);
 
-        for(const [key,value] of this.asks) {
-            isDeleted = value.some(order => {
-                if(order.id === orderId) {
-                    const index = value.indexOf(order);
-                    value.splice(index,1);
-                    if(value.length === 0) this.asks.delete(key);
+            if (index !== -1) {
+                const [order] = orders.splice(index, 1);
+                if(!order) throw new Error("Order not found");
 
-                    order.status = "CANCELLED";
-                    return true;
+                if (orders.length === 0) {
+                    this.asks.delete(key);
                 }
-            });
+
+                order.status = "CANCELLED";
+
+                return order;
+            }
         }
 
-        for(const [key,value] of this.bids) {
-            isDeleted = value.some(order => {
-                if(order.id === orderId) {
-                    const index = value.indexOf(order);
-                    value.splice(index,1);
-                    if(value.length === 0) this.asks.delete(key);
+        for (const [key, orders] of this.bids) {
+            const index = orders.findIndex(order => order.id === orderId);
 
-                    order.status = "CANCELLED";
-                    return true;
+            if (index !== -1) {
+                const [order] = orders.splice(index, 1);
+                if(!order) throw new Error("Order not found");
+
+                if (orders.length === 0) {
+                    this.bids.delete(key);
                 }
-            });
+
+                order.status = "CANCELLED";
+
+                return order;
+            }
         }
 
-        return isDeleted;
+        throw new Error("Order not found");
     }
 }

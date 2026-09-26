@@ -89,6 +89,28 @@ export class Exchange {
             order,
             trades
         };
+    }
 
+    cancelOrder(orderId: string) {
+        const order = this.orders.get(orderId);
+
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        const matchingEngine = this.markets.get(order.stockId);
+
+        if (!matchingEngine) {
+            throw new Error("Stock not found");
+        }
+
+        const cancelledOrder = matchingEngine.deleteOrder(orderId);
+
+        this.accountManager.releaseOrderResources(
+            cancelledOrder,
+            order.stockId
+        );
+
+        return cancelledOrder;
     }
 }

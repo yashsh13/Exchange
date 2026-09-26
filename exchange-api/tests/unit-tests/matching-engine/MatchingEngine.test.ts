@@ -142,7 +142,7 @@ describe('Matching engine tests', () => {
         expect(bids).toEqual(new Map([[100, [aliceOrder.order] ]]));
     });
 
-    it('cancels an order', () => {
+    it('deletes an order', () => {
         const engine = new MatchingEngine();
 
         const bobOrder = engine.matchOrder({
@@ -157,16 +157,16 @@ describe('Matching engine tests', () => {
             status: "OPEN"
         });
 
-        const isCancelled = engine.deleteOrder(bobOrder.order.id);
+        const cancelledOrder = engine.deleteOrder(bobOrder.order.id);
 
-        const {asks} = engine.getOrderBook();
+        const { asks } = engine.getOrderBook();
 
-        expect(bobOrder.order.status).toBe("CANCELLED");
-        expect(isCancelled).toBe(true);
+        expect(cancelledOrder).toBe(bobOrder.order);
+        expect(cancelledOrder.status).toBe("CANCELLED");
         expect(asks).toEqual(new Map());
     });
 
-    it('doesnt cancels an invalid order', () => {
+    it('doesnt delete an invalid order', () => {
         const engine = new MatchingEngine();
 
         const bobOrder = engine.matchOrder({
@@ -181,11 +181,16 @@ describe('Matching engine tests', () => {
             status: "OPEN"
         });
 
-        const isCancelled = engine.deleteOrder("2");
+        expect(() => {
+            engine.deleteOrder("2");
+        }).toThrow("Order not found");
 
-        const {asks} = engine.getOrderBook();
+        const { asks } = engine.getOrderBook();
 
-        expect(isCancelled).toBe(false);
-        expect(asks).toEqual(new Map([[110, [bobOrder.order] ]]));
+        expect(asks).toEqual(
+            new Map([
+                [110, [bobOrder.order]]
+            ])
+        );
     });
 })
